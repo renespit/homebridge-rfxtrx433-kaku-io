@@ -57,4 +57,3 @@ This command start 2 separate jobs on your server:
         
 The first job keeps reading the http://localhost/domotica/sync_button_homebridge.php webpage then next job keeps reading the /dev/ttyUSB0 or /dev/ttyUSB1 device and put the output in a log file. 
 
-![Simple_icon_location svg](https://user-images.githubusercontent.com/34937329/152695053-7f1e4c13-7a70-462e-8edc-52301905dcbd.png)
