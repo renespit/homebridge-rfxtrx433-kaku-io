@@ -204,9 +204,4 @@ class button {
     public function setPrev_signallevel($prev_signallevel): void {
         $this->prev_signallevel = $prev_signallevel;
     }
-
-
-    
-    
-
 }
