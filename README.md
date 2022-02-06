@@ -6,6 +6,8 @@ Step 1:
 Make a list of kaku-switches you have installed in your house. Each switch has an Id. You can find the Id by using the file rfxcmd.py ( http://www.rfxcom.com/epages/78165469.sf/nl_NL/?ObjectPath=/Shops/78165469/Categories/Downloads ).
 On the commandline you can run: **/usr/bin/python2.7 /home/rene/rfxcmd/rfxcmd_gc/rfxcmd.py  -l -v -d /dev/ttyUSB1**
 
+After pushing the button you get bellow output:
+
 ------------------------------------------------
 Received		= 0B 11 00 00 00 38 51 F7 02 01 0F 80
 Date/Time		= 2022-02-06 17:25:10
@@ -18,5 +20,15 @@ Unitcode		= 2
 Command			= On
 Dim level		= 100%
 Signal level		= 8
+
+Step 2:
+
+Inside homebridge you gave every lamp a name. Put in the list which button turns on or off what lamp. One switch can operate more then one lamp.
+In my case switch with id 003851F7 operates a lamp downstairs and one lamp upstairs.
+Put that in the list buttons_and_members.json,
+
+
+
+
 
 
