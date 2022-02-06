@@ -50,7 +50,7 @@ Start commandline-script start_read_write_clicks.sh with sudo rights:
 
     sudo ./start_read_write_clicks.sh
 
-This command start 2 separate jobs on your servers:
+This command start 2 separate jobs on your server:
 
     nohup ./loop_sync.sh &
     nohup ./read_rfxtrx433.sh & 
