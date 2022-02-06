@@ -35,7 +35,7 @@ Step 2:
 
 Inside homebridge you gave every lamp a name. Put in the list which button turns on or off what lamp. One switch can operate more then one lamp.
 In my case switch with id 003851F7 operates a lamp downstairs and one lamp upstairs.
-Put that in the list buttons_and_members.json,
+Put that in the list **buttons_and_members.json**,
 
     "003851F7": {
             "members": [
@@ -50,4 +50,9 @@ Start commandline-script start_read_write_clicks.sh with sudo rights:
 
     sudo ./start_read_write_clicks.sh
 
+This command start 2 separate jobs on your servers:
 
+    nohup ./loop_sync.sh &
+    nohup ./read_rfxtrx433.sh & 
+        
+The first job keeps reading the http://localhost/domotica/sync_button_homebridge.php webpage then next job keeps reading the /dev/ttyUSB0 or /dev/ttyUSB1 device and put the output in a log file. 
