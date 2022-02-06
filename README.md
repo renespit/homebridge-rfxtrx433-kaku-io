@@ -3,11 +3,11 @@ This script makes the status of kaku-switches visible in homebridge (io)
 
 Requirements:
 
-. HomeBridge
-. Klik Aan Klik Uit Switches 
-. Klik Aan Klik Uit ISC-1000
-. PHP Installed on a Linux server
-. RFXTRX433 on the same Linux server
+    HomeBridge
+    Klik Aan Klik Uit Switches 
+    Klik Aan Klik Uit ISC-1000
+    PHP Installed on a Linux server
+    RFXTRX433 on the same Linux server
 
 Step 1:
 
@@ -37,7 +37,7 @@ Inside homebridge you gave every lamp a name. Put in the list which button turns
 In my case switch with id 003851F7 operates a lamp downstairs and one lamp upstairs.
 Put that in the list buttons_and_members.json,
 
-    "0028ECDF": {
+    "003851F7": {
             "members": [
                 "Beneden overloop", 
                 "Boven overloop"
