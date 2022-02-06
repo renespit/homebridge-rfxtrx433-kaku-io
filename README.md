@@ -1,5 +1,12 @@
 # homebridge-rfxtrx433-kaku-io
-This script makes the status of kaku-switches visible in homebridge (io)  
+
+In Homekit you can operate lights and other stuff. I love it when homekit shows the actual status of a light. 
+
+![Schermafbeelding 2022-02-06 om 19 17 40](https://user-images.githubusercontent.com/34937329/152695233-4acbd506-36ee-4794-a070-239e6a3a3768.png)
+
+But if I switch a light with kaku-switch then Homekit is out of sync.
+
+This script shows the real status of kaku-switches in HomeBridge (io) and in Homekit
 
 Requirements:
 
