@@ -1,10 +1,21 @@
 <?php
 
-function show($mystring, $no_html = false) {
-    if ($no_html) {
-        echo ( print_r($mystring, true));
+function show($caption, $mystring = null, $doreturn = false) {
+    if (!isset($mystring)) {
+        $mystring = "null";
+    }
+
+    $output = "";
+    $output .= "<strong>" . $caption . "</strong>";
+    $output .= "<pre style='border: 1px rgb(229, 229, 229) solid; background: #FAFAFA; padding: 10px; color: gray; max-height: 200px; overflow: auto;'>";
+    $output .= print_r($mystring, true);
+    $output .= "</pre>";
+
+    if ($doreturn) {
+        return $output;
     } else {
-        echo "<pre style='border: 1px rgb(229, 229, 229) solid; background: #FAFAFA; padding: 10px; color: gray; max-height: 200px; overflow: auto;'>" . print_r($mystring, true) . "</pre>";
+        echo $output;
+        return null;
     }
 }
 
@@ -14,41 +25,41 @@ function write_to_log($logfile, $array) {
 }
 
 function load_variables_from_rfxcmd_log($rfxcmd_log) {
-    exec("grep -m 1 -n -a -i \"\-\-\-\-\-\" $rfxcmd_log | cut -d \":\" -f 1", $stdout_lines);
+    exec("grep -m 1 -n -a -i \"Signal level\" $rfxcmd_log | cut -d \":\" -f 1", $stdout_lines);
 
-    if (count($stdout_lines) == 0) {
-        exec("echo '------------------------------------------------' >> $rfxcmd_log");
-        exec("grep -m 1 -n -a -i \"\-\-\-\-\-\" $rfxcmd_log | cut -d \":\" -f 1", $stdout_lines);
+    if (isset($stdout_lines) && count($stdout_lines) > 0) {
+        
+        $numberoflines = $stdout_lines[0] + 1;
+        unset($stdout_lines);
+        show("Number of lines read from: " . $rfxcmd_log, $numberoflines, false);
+
+        exec("head -$numberoflines $rfxcmd_log", $stdout_lines);
+        array_pop($stdout_lines);
+        if (count($stdout_lines) > 0) {
+            write_to_log($rfxcmd_log . ".log", $stdout_lines);
+        }
+
+        foreach ($stdout_lines as $key => $line) {
+            $line = str_replace("-", "", $line);
+            $line = str_replace("\t", "", $line);
+            $line = str_replace(" ", "", $line);
+            $line = str_replace("/", "", $line);
+            $line = str_replace("=", "(\"", $line);
+            $line = ucfirst($line);
+            $line = '$button->set' . $line . "\");";
+            $stdout_lines[$key] = $line;
+        }
+
+        $content = file($rfxcmd_log);
+        array_splice($content, 0, $numberoflines);
+        file_put_contents($rfxcmd_log, $content);
+
+        return $stdout_lines;
     }
-
-    $numberoflines = $stdout_lines[0] * 1;
-    unset($stdout_lines);
-
-    exec("head -$numberoflines $rfxcmd_log", $stdout_lines);
-    array_pop($stdout_lines);
-    if (count($stdout_lines) > 0) {
-        write_to_log($rfxcmd_log . ".log", $stdout_lines);
-    }
-
-    foreach ($stdout_lines as $key => $line) {
-        $line = str_replace("-", "", $line);
-        $line = str_replace("\t", "", $line);
-        $line = str_replace(" ", "", $line);
-        $line = str_replace("/", "", $line);
-        $line = str_replace("=", "(\"", $line);
-        $line = ucfirst($line);
-        $line = '$button->set' . $line . "\");";
-        $stdout_lines[$key] = $line;
-    }
-
-    $content = file($rfxcmd_log);
-    array_splice($content, 0, $numberoflines);
-    file_put_contents($rfxcmd_log, $content);
-
-    return $stdout_lines;
 }
 
 function hb_call_restapi($url, $headers, $post = null, $put = null) {
+
     $ch = curl_init();
 
     curl_setopt($ch, CURLOPT_HEADER, FALSE);
@@ -68,6 +79,12 @@ function hb_call_restapi($url, $headers, $post = null, $put = null) {
     $response = curl_exec($ch);
     curl_close($ch);
 
+    show("URL", $url);
+    show("Headers", $headers);
+    show("Post", $post);
+    show("Put" . $put);
+    show("Response", json_decode($response));
+
     return $response;
 }
 
@@ -80,50 +97,37 @@ function hb_login() {
     global $password;
 
     $url = "$protocol://$hostname:$port/api/auth/login";
-    $post = '{ "username": "' . $username . '","password": "' . $password . '","otp": "string"}';
+    $post = '{"username":"' . $username . '","password":"' . $password . '","otp":"string"}';
     $headers = [
-        'accept: */*',
+        'Accept: */*',
         'Content-Type: application/json'
     ];
 
     return json_decode(hb_call_restapi($url, $headers, $post));
 }
 
-function hb_get_accessoiries() {
+function hb_get_accessoiries($access_token, $token_type) {
     global $protocol;
     global $hostname;
     global $port;
-    global $method;
-    global $username;
-    global $password;
-
-    $json = hb_login();
-
-    $access_token = $json->access_token;
-    $token_type = $json->token_type;
 
     $url = "$protocol://$hostname:$port/api/accessories";
-    $post = '{ "username": "' . $username . '","password": "' . $password . '","otp": "string"}';
+    show("URL", $url);
     $headers = [
-        'accept: */*',
+        'Accept: */*',
         'Authorization: ' . $token_type . ' ' . $access_token . ''
     ];
 
     return json_decode(hb_call_restapi($url, $headers));
 }
 
-function hb_put_accessoiries($accessoirie, $value) {
+function hb_put_accessoiries($access_token, $token_type, $accessoirie, $value) {
     global $protocol;
     global $hostname;
     global $port;
     global $method;
     global $username;
     global $password;
-
-    $json = hb_login();
-
-    $access_token = $json->access_token;
-    $token_type = $json->token_type;
 
     switch ($value) {
         case "On":
@@ -138,7 +142,7 @@ function hb_put_accessoiries($accessoirie, $value) {
     $myarray = ["characteristicType" => "On", "value" => $value];
     $jsonput = json_encode($myarray);
     $headers = [
-        "accept: */*",
+        "Accept: */*",
         "Content-Type: application/json",
         "Authorization: $token_type $access_token"
     ];

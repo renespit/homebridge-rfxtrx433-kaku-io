@@ -4,7 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $protocol = "http";
-$hostname = "localhost";
+$hostname = "unifi.oplan.nl";
 $port = "8581";
 $method = "";
 $username = "admin";
